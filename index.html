@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prototipe Aglo-Smart Ecosystem - Yoga Farm</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
+    <!-- Top Navigation -->
     <nav class="bg-emerald-600 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 flex justify-between items-center h-14">
             <span class="font-bold tracking-wide flex items-center gap-2">
@@ -22,22 +25,28 @@
         </div>
     </nav>
 
+    <!-- MAIN CONTAINER -->
     <main class="max-w-6xl mx-auto p-4 min-h-[calc(100vh-3.5rem)]">
 
+        <!-- ================= TAB 1: KATALOG (TAMPILAN MOBILE PEMBELI) ================= -->
         <section id="tab-katalog" class="tab-content block max-w-md mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 p-6 text-white text-center">
                 <h2 class="text-xl font-bold">Katalog Resmi Aglaonema</h2>
                 <p class="text-xs opacity-90 mt-1">Desa Pejaten, Kediri, Tabanan</p>
             </div>
             
+            <!-- List Produk dari LocalStorage (Sinkronisasi Otomatis) -->
             <div id="katalog-list" class="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
-                </div>
+                <!-- Data di-render via JavaScript -->
+            </div>
             <div class="p-3 bg-gray-50 text-center text-xs text-gray-400 border-t border-gray-100">
                 Di-scan via Sistem QR-Code Terintegrasi
             </div>
         </section>
 
+        <!-- ================= TAB 2: DASHBOARD ADMIN INVENTORI ================= -->
         <section id="tab-admin" class="tab-content hidden space-y-6">
+            <!-- Statistik Kapasitas Mitra (300-500 Unit) -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
                     <div class="p-3 bg-emerald-100 text-emerald-600 rounded-lg"><i data-lucide="layers"></i></div>
@@ -62,7 +71,9 @@
                 </div>
             </div>
 
+            <!-- Form Tambah Stok & Tabel -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form Input -->
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 h-fit">
                     <h4 class="font-bold text-gray-700 text-sm mb-3 flex items-center gap-1"><i data-lucide="plus-circle" class="w-4 h-4"></i> Tambah / Edit Stok</h4>
                     <form id="form-tanaman" class="space-y-3 text-xs">
@@ -101,10 +112,295 @@
                     </form>
                 </div>
 
+                <!-- Tabel Real-Time -->
                 <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-4 bg-gray-50 border-b border-gray-100">
                         <h3 class="font-bold text-gray-700 text-sm flex items-center gap-2"><i data-lucide="database" class="w-4 h-4"></i> Data Inventori Kebun</h3>
                     </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-gray-100/70 text-gray-600 font-semibold border-b border-gray-200">
+                                    <th class="p-3">Varietas</th>
+                                    <th class="p-3">Ukuran</th>
+                                    <th class="p-3">Harga</th>
+                                    <th class="p-3">Stok</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="text-gray-600 divide-y divide-gray-100">
+                                <!-- Di-render via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: MODUL LAPORAN KEUANGAN BULANAN ================= -->
+        <section id="tab-keuangan" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-4 mb-4">
+                    <h3 class="font-bold text-gray-700 text-base flex items-center gap-2"><i data-lucide="wallet"></i> Pembukuan Keuangan Terstandar UMKM</h3>
+                    <span id="total-saldo" class="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">Saldo: Rp 0</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Form Input Kas -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 h-fit">
+                        <h4 class="font-semibold text-gray-700 text-xs mb-3">Input Arus Kas Baru</h4>
+                        <form id="form-keuangan" class="space-y-3 text-xs">
+                            <div>
+                                <label class="block text-gray-600 mb-1 font-medium">Jenis Transaksi</label>
+                                <select id="keu-tipe" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-xs">
+                                    <option value="masuk">Kas Masuk (Penjualan)</option>
+                                    <option value="keluar">Kas Keluar (Operasional Kebun)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 mb-1 font-medium">Nominal (Rp)</label>
+                                <input type="number" id="keu-nominal" required placeholder="Contoh: 150000" class="w-full bg-white border border-gray-300 rounded-lg p-2 text-xs focus:outline-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 mb-1 font-medium">Keterangan</label>
+                                <input type="text" id="keu-ket" required placeholder="Detail transaksi..." class="w-full bg-white border border-gray-300 rounded-lg p-2 text-xs focus:outline-emerald-500">
+                            </div>
+                            <button type="submit" class="w-full bg-emerald-600 text-white font-bold p-2 rounded-lg hover:bg-emerald-500 transition cursor-pointer">Simpan Transaksi</button>
+                        </form>
+                    </div>
+
+                    <!-- Ringkasan Log Berwarna -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-semibold text-gray-700 text-xs">Log Arus Kas Terakhir (Bulanan)</h4>
+                            <button onclick="clearKeuangan()" class="text-[10px] text-red-500 hover:underline cursor-pointer">Hapus Semua Log</button>
+                        </div>
+                        <div id="keuangan-list" class="space-y-2 max-h-[250px] overflow-y-auto text-xs">
+                            <!-- Di-render via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL POPUP UNTUK SIMULASI CETAK QR CODE -->
+    <div id="qrModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl border border-gray-100">
+            <h4 id="qrTitle" class="font-bold text-gray-800 text-sm mb-2"></h4>
+            <div class="bg-gray-50 p-4 rounded-xl inline-block border border-gray-200 shadow-inner">
+                <img id="qrImage" src="" alt="QR Code" class="w-44 h-44 mx-auto">
+            </div>
+            <p class="text-[11px] text-gray-400 mt-3 px-2">QR Code ini merepresentasikan data unik relasional dari basis data komoditas hortikultura Desa Pejaten.</p>
+            <div class="mt-5 flex gap-2">
+                <button onclick="closeQrModal()" class="w-1/2 bg-gray-200 text-gray-700 font-bold py-2 rounded-lg text-xs hover:bg-gray-300 cursor-pointer">Tutup</button>
+                <button onclick="alert('Simulasi Cetak Label Sukses! QR siap ditempel di pot.')" class="w-1/2 bg-emerald-600 text-white font-bold py-2 rounded-lg text-xs hover:bg-emerald-500 shadow-md cursor-pointer">Cetak Label</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CORE ENGINE INTERAKTIF -->
+    <script>
+        // Data Dummy Awal
+        const defaultTanaman = [
+            { id: 1, nama: "Suksom Jaipong", ukuran: "Remaja", harga: 185000, stok: 12, status: "Siap Jual" },
+            { id: 2, nama: "Aglaonema Khanza", ukuran: "Anakan", harga: 250000, stok: 8, status: "Perawatan" }
+        ];
+        const defaultKeuangan = [
+            { id: 1, tipe: "masuk", nominal: 370000, ket: "Penjualan 2 Pot Suksom", tanggal: "28 Juni 2026" },
+            { id: 2, tipe: "keluar", nominal: 120000, ket: "Pembelian Media Tanam Pakis", tanggal: "25 Juni 2026" }
+        ];
+
+        // Sinkronisasi LocalStorage
+        let dataTanaman = JSON.parse(localStorage.getItem('aglo_plants')) || defaultTanaman;
+        let dataKeuangan = JSON.parse(localStorage.getItem('aglo_finance')) || defaultKeuangan;
+
+        function saveData() {
+            localStorage.setItem('aglo_plants', JSON.stringify(dataTanaman));
+            localStorage.setItem('aglo_finance', JSON.stringify(dataKeuangan));
+            renderAll();
+        }
+
+        // Fungsi Ganti Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            
+            const activeTab = document.getElementById('tab-' + tabId);
+            activeTab.classList.remove('hidden');
+            if(tabId === 'katalog') {
+                activeTab.classList.add('block');
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('bg-emerald-700', 'font-semibold'));
+            document.getElementById('btn-' + tabId).classList.add('bg-emerald-700', 'font-semibold');
+        }
+
+        // 1. Render Katalog (Tampilan HP Konsumen)
+        function renderKatalog() {
+            const list = document.getElementById('katalog-list');
+            list.innerHTML = '';
+            dataTanaman.forEach(t => {
+                const isSiap = t.status === 'Siap Jual';
+                list.innerHTML += `
+                    <div class="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-xs flex gap-3 p-2 ${isSiap ? '' : 'opacity-60'}">
+                        <div class="w-24 h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 flex-shrink-0 font-bold text-xs p-1 text-center border border-emerald-100">
+                            ${t.nama}
+                        </div>
+                        <div class="flex flex-col justify-between w-full text-xs">
+                            <div>
+                                <span class="${isSiap ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} text-[9px] font-bold px-2 py-0.5 rounded-full">${t.status}</span>
+                                <h3 class="font-bold text-gray-800 text-sm mt-1">${t.nama}</h3>
+                                <p class="text-[11px] text-gray-500">Ukuran: ${t.ukuran}</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-emerald-600 font-bold">Rp ${parseInt(t.harga).toLocaleString('id-ID')}</span>
+                                <span class="text-[10px] text-gray-400">Stok: ${t.stok}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 2. Render Tabel Admin & Smart Inventory
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+            dataTanaman.forEach(t => {
+                // Menghasilkan link QR code statis via API berdasarkan data dinamis
+                const qrUrl = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(window.location.href + '?id=' + t.id)}&choe=UTF-8`;
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50/50">
+                        <td class="p-3 font-medium text-gray-800">${t.nama}</td>
+                        <td class="p-3">${t.ukuran}</td>
+                        <td class="p-3">Rp ${parseInt(t.harga).toLocaleString('id-ID')}</td>
+                        <td class="p-3 font-semibold ${t.stok > 0 ? 'text-emerald-600' : 'text-red-500'}">${t.stok} Pot</td>
+                        <td class="p-3">
+                            <span class="${t.status === 'Siap Jual' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'} text-[10px] px-2 py-0.5 rounded font-medium">${t.status}</span>
+                        </td>
+                        <td class="p-3 text-center flex justify-center gap-3">
+                            <button onclick="openQrModal('${t.nama} (${t.ukuran})', '${qrUrl}')" class="text-emerald-600 hover:underline flex items-center gap-0.5 font-medium cursor-pointer">
+                                QR
+                            </button>
+                            <button onclick="deleteTanaman(${t.id})" class="text-red-500 hover:underline font-medium cursor-pointer">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // 3. Render Modul Pembukuan Keuangan
+        function renderKeuangan() {
+            const list = document.getElementById('keuangan-list');
+            const totalSaldoEl = document.getElementById('total-saldo');
+            list.innerHTML = '';
+            let saldo = 0;
+
+            dataKeuangan.forEach(k => {
+                const isMasuk = k.tipe === 'masuk';
+                saldo += isMasuk ? parseInt(k.nominal) : -parseInt(k.nominal);
+                list.innerHTML += `
+                    <div class="${isMasuk ? 'bg-emerald-50 border-emerald-500' : 'bg-red-50 border-red-400'} border-l-4 p-2.5 rounded-r-lg flex justify-between items-center shadow-2xs">
+                        <div>
+                            <p class="font-bold text-gray-800 text-xs">${k.ket}</p>
+                            <p class="text-[9px] text-gray-400">${k.tanggal}</p>
+                        </div>
+                        <span class="font-bold ${isMasuk ? 'text-emerald-600' : 'text-red-500'}">
+                            ${isMasuk ? '+' : '-'}Rp ${parseInt(k.nominal).toLocaleString('id-ID')}
+                        </span>
+                    </div>
+                `;
+            });
+            totalSaldoEl.innerText = `Saldo: Rp ${saldo.toLocaleString('id-ID')}`;
+        }
+
+        // 4. Hitung Statistik Otomatis
+        function updateStats() {
+            let totalPot = dataTanaman.reduce((sum, t) => sum + parseInt(t.stok), 0);
+            document.getElementById('stat-total').innerHTML = `${totalPot} / 500 <span class="text-xs font-normal text-gray-400">Pot</span>`;
+            document.getElementById('stat-siap').innerText = `${dataTanaman.filter(t => t.status === 'Siap Jual').length} Jenis`;
+            document.getElementById('stat-rawat').innerText = `${dataTanaman.filter(t => t.status === 'Perawatan').length} Jenis`;
+        }
+
+        // Master Render
+        function renderAll() {
+            renderKatalog();
+            renderInventoryTable();
+            renderKeuangan();
+            updateStats();
+            lucide.createIcons();
+        }
+
+        // Event Handler Tambah Tanaman
+        document.getElementById('form-tanaman').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newPlant = {
+                id: Date.now(),
+                nama: document.getElementById('inv-nama').value,
+                ukuran: document.getElementById('inv-ukuran').value,
+                stok: parseInt(document.getElementById('inv-stok').value),
+                harga: parseInt(document.getElementById('inv-harga').value),
+                status: document.getElementById('inv-status').value
+            };
+            dataTanaman.push(newPlant);
+            document.getElementById('form-tanaman').reset();
+            saveData();
+        });
+
+        // Event Handler Tambah Catatan Keuangan
+        document.getElementById('form-keuangan').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const now = new Date();
+            const newLog = {
+                id: Date.now(),
+                tipe: document.getElementById('keu-tipe').value,
+                nominal: parseInt(document.getElementById('keu-nominal').value),
+                ket: document.getElementById('keu-ket').value,
+                tanggal: now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+            };
+            dataKeuangan.unshift(newLog);
+            document.getElementById('form-keuangan').reset();
+            saveData();
+        });
+
+        // Aksi Hapus Data
+        function deleteTanaman(id) {
+            if(confirm('Hapus varietas ini dari data inventori?')) {
+                dataTanaman = dataTanaman.filter(t => t.id !== id);
+                saveData();
+            }
+        }
+
+        function clearKeuangan() {
+            if(confirm('Hapus seluruh riwayat log keuangan bulanan?')) {
+                dataKeuangan = [];
+                saveData();
+            }
+        }
+
+        // Kontrol Modal QR Code
+        function openQrModal(title, imgUrl) {
+            document.getElementById('qrTitle').innerText = title;
+            document.getElementById('qrImage').src = imgUrl;
+            document.getElementById('qrModal').classList.remove('hidden');
+        }
+
+        function closeQrModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        // Run Core Engine on Windows Load
+        window.onload = function() {
+            renderAll();
+        };
+    </script>
+</body>
+</html>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
